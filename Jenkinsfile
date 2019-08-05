@@ -16,16 +16,5 @@ node{
      }
 
 
-  stage('Sonar'){
-          try {
-                withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'TOKEN')]) {
-                               sh "mvn sonar:sonar -Dsonar.login=$TOKEN"
-                }
-
-          } catch(error){
-              echo "The sonar server could not be reached ${error}"
-          }
-       }
-
 
    }
