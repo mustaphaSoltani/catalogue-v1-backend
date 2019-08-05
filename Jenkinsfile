@@ -2,7 +2,7 @@ def HTTP_PORT="8090"
 node{
 
  stage('Initialize'){
-        def mavenHome  = tool 'M3'
+        def mavenHome  = tool 'maven 3.6.0'
         env.PATH = "${mavenHome}/bin:${env.PATH}"
     }
 
@@ -30,6 +30,6 @@ node{
               echo "The sonar server could not be reached ${error}"
           }
        }
- 
+
 
    }
