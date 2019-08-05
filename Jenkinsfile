@@ -10,10 +10,9 @@ node{
         checkout scm
     }
     stage('Build') {
- try {
 
          sh 'mvn clean install'
-}
+
      }
 
 
