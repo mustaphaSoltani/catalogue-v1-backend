@@ -1,26 +1,35 @@
-pipeline{
-  agent any
-     stages{
-        stage('compile stage'){
-          steps{
-            withMaven(maven : '3.6.0'){
-              sh'mvn clean compile'
-              }
-            }
-           }
-         stage('testing stage'){
-         steps{
-              withMaven(maven : 'maven 3.6.0'){
-                 sh'mvn test'
-            }
-          }
-         }
-          stage('deployement stage'){
-         steps{
-              withMaven(maven : 'maven 3.6.0'){
-                sh'mvn deploy'
-              }
-           }
-       }
-   }
+def HTTP_PORT="8090"
+node{
+
+ stage('Initialize'){
+        def mavenHome  = tool 'M3'
+        env.PATH = "${mavenHome}/bin:${env.PATH}"
+    }
+
+    stage('Checkout') {
+        checkout scm
+    }
+    stage('Build') {
+ try {
+
+         sh 'mvn clean install'
+} finally {
+           step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
+
 }
+     }
+
+
+  stage('Sonar'){
+          try {
+                withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'TOKEN')]) {
+                               sh "mvn sonar:sonar -Dsonar.login=$TOKEN"
+                }
+
+          } catch(error){
+              echo "The sonar server could not be reached ${error}"
+          }
+       }
+ 
+
+   }
